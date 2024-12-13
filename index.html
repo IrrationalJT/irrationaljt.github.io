@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google App Service Consumer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        #dataContainer {
+            margin-top: 20px;
+        }
+        #loading {
+            font-size: 18px;
+            color: #007bff;
+        }
+        .error {
+            color: red;
+        }
+        .result {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Google App Service Data</h1>
+    <p>Enter the URL of the Google App Service (or any API endpoint) to fetch data:</p>
+
+    <input type="text" id="apiUrl" placeholder="Enter URL here" style="width: 300px;">
+    <button onclick="fetchData()">Fetch Data</button>
+
+    <div id="loading" style="display: none;">Loading...</div>
+    <div id="dataContainer"></div>
+
+    <script>
+        // Function to fetch data from the API
+        async function fetchData() {
+            const apiUrl = document.getElementById('apiUrl').value.trim();
+            const loading = document.getElementById('loading');
+            const dataContainer = document.getElementById('dataContainer');
+            loading.style.display = 'block';  // Show loading indicator
+            dataContainer.innerHTML = '';     // Clear previous results
+
+            try {
+                const response = await fetch(apiUrl);
+
+                // Check if the response is ok (status code 200-299)
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch data: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+
+                // If data is received, present it
+                if (Array.isArray(data)) {
+                    data.forEach(item => {
+                        const resultElement = document.createElement('div');
+                        resultElement.className = 'result';
+                        resultElement.textContent = JSON.stringify(item, null, 2); // Pretty print JSON
+                        dataContainer.appendChild(resultElement);
+                    });
+                } else {
+                    const resultElement = document.createElement('div');
+                    resultElement.className = 'result';
+                    resultElement.textContent = JSON.stringify(data, null, 2); // Pretty print JSON
+                    dataContainer.appendChild(resultElement);
+                }
+            } catch (error) {
+                // If there's an error, show it
+                dataContainer.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+            } finally {
+                loading.style.display = 'none'; // Hide loading indicator
+            }
+        }
+    </script>
+
+</body>
+</html>
