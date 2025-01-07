@@ -4,42 +4,169 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script>
-    // Function to make the API call and handle the response
-    function fetchApiData() {
-      // Replace with the actual Google API endpoint URL
-      const apiUrl = 'https://script.google.com/macros/s/AKfycbxbpJQxyR5jbJ63lFrWlMu-8J7F2jjRH8g7xDgIWdGnqH68sDajiea9Ip2cSr5k7_YWEg/exec'; 
+    var apiURL = 'https://script.google.com/macros/s/AKfycbxJdp0mG2T5u7gkVsWDkiJ4BOExfe6BiSQBhfq1qgJ8dUqmzSVXN_jjKf2Wly8-0Gbo6g/exec';
+    var googleAnalyticsID = 'G-8D074M3G8Q';
+    var modalTitle = 'IrrationalJT.com';
+    var windowTitle = 'IrrationalJT.com';
+  </script>
 
-      fetch(apiUrl)
-        .then(response => response.text()) // Assuming the API returns HTML and JavaScript
-        .then(data => {
-          // Render the HTML content and execute any JavaScript included in the response
-          document.getElementById('api-response').innerHTML = data;
-
-          // Optionally: eval to run JavaScript returned by the API (use with caution)
-          const scripts = data.match(/<script\b[^>]*>([\s\S]*?)<\/script>/g);
-          if (scripts) {
-            scripts.forEach(script => {
-              const scriptContent = script.replace(/<\/?script>/g, '');
-              const newScript = document.createElement('script');
-              newScript.textContent = scriptContent;
-              document.body.appendChild(newScript);
-            });
-          }
-        })
-        .catch(error => {
-          console.error('Error fetching data from the API:', error);
-          document.getElementById('api-response').innerHTML = '<p>Error loading content.</p>';
-        });
+  <style>
+    /* Modal styles */
+    .modal {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
     }
 
-    // Call the API when the page loads
+    .modal-content {
+      background-color: #fefefe;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      width: 80%;
+      max-width: 500px;
+    }
+
+    .modal-header {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #333;
+      background-color: #f0f0f0; /* Light neutral background color */
+      padding: 10px;
+      border-radius: 10px 10px 0 0; /* Rounded corners for the top */
+    }
+
+    .modal p {
+      margin: 10px 0;
+    }
+
+    .modal button {
+      padding: 10px 20px;
+      background-color: gray;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .modal button:hover {
+      background-color: #45a049;
+    }
+  </style>
+   <!-- Google tag (gtag.js) -->
+   <script async src="https://www.googletagmanager.com/gtag/js?id=" + googleAnalyticsID></script>
+   <script>
+   window.dataLayer = window.dataLayer || [];
+   function gtag(){dataLayer.push(arguments);}
+   gtag('js', new Date());
+
+   gtag('config', googleAnalyticsID);
+   </script>
+  <script>
+      function fetchApiData() {        
+         // Get the current URL's query string
+         var queryString = window.location.search;
+        
+        // Append the query string to the apiURL
+        apiURL += queryString;
+
+        fetch(apiURL, {
+          redirect: 'follow', // manual, *follow, error
+          method: 'GET',
+          headers: {
+            'Content-Type': 'text/plain;charset=utf-8',
+          }
+        })
+          .then(response => response.text())
+          .then(data => {
+            ProcessData(data);
+            console.log('Received data:', data);
+          })
+          .catch(error => {
+            console.error('Error fetching data:', error);
+          });
+        }     
+
+        function ProcessData(data) {
+      try {
+        const jsonData = JSON.parse(data);
+        console.log('Processing JSON data:', jsonData);
+
+        const redirectURL = jsonData.RedirectURL;
+        const message = jsonData.Message || '';
+        const buttonText = jsonData.ConfirmationButtonText || '';
+
+        if (!message && !buttonText) {
+          window.location.href = redirectURL;
+        } else if (message && !buttonText) {
+          const countdownTime = calculateReadingTime(message);
+          let countdownSeconds = Math.round(countdownTime / 1000);
+          const countdownInterval = setInterval(() => {
+            document.getElementById('api-response').innerHTML = getCountdownTemplate(message, countdownSeconds);
+            countdownSeconds--;
+            if (countdownSeconds < 0) {
+              clearInterval(countdownInterval);
+              window.location.href = redirectURL;
+            }
+          }, 1000);
+        } else if (message && buttonText) {
+          document.getElementById('api-response').innerHTML = getButtonTemplate(message, buttonText);
+          document.getElementById('confirmation-button').addEventListener('click', () => {
+            window.location.href = redirectURL;
+          });
+        }
+      } catch (error) {
+        console.error('Error processing JSON data:', error);
+        document.getElementById('api-response').innerText = 'Error parsing JSON data.';
+      }
+    }
+
+  function calculateReadingTime(text) {
+    const wordsPerMinute = 200; // Average reading speed
+    const words = text.trim().split(/\s+/).length; // Count words in the text
+    const readingTimeMinutes = words / wordsPerMinute; // Time in minutes
+    const readingTimeMilliseconds = readingTimeMinutes * 60 * 1000; // Convert to milliseconds
+    return Math.round(readingTimeMilliseconds); // Round to the nearest millisecond
+}
+
+function getCountdownTemplate(message, countdownSeconds) {
+      return `
+        <div class="modal">
+          <div class="modal-content">
+            <div class="modal-header">${modalTitle}</div>
+            <p>${message}</p>
+            <p>Redirecting in ${countdownSeconds} seconds...</p>
+          </div>
+        </div>
+      `;
+    }
+
+    function getButtonTemplate(message, buttonText) {
+      return `
+        <div class="modal">
+          <div class="modal-content">
+            <div class="modal-header">${modalTitle}</div>
+            <p>${message}</p>
+            <button id="confirmation-button">${buttonText}</button>
+          </div>
+        </div>
+      `;
+    }
+
     window.onload = fetchApiData;
   </script>
 </head>
 <body>
-  <h1>Google API Response</h1>
-  <div id="api-response">
-    <p>Loading...</p>
-  </div>
+  <div id="api-response"></div>
 </body>
 </html>
