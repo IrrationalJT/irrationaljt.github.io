@@ -63,7 +63,16 @@
     }
 
     .modal button:hover {
-      background-color: #45a049;
+      background-color: #000;
+      color: #fff;
+    }
+
+    .countdown {
+      font-size: 20px;      
+      font-style: italic;
+      padding-top: 10px;
+      color: rgb(87, 80, 80);
+      margin-top: 10px;
     }
   </style>
    <!-- Google tag (gtag.js) -->
@@ -74,6 +83,10 @@
    gtag('js', new Date());
 
    gtag('config', googleAnalyticsID);
+    gtag('event', 'screen_view', {
+      'app_name': 'dynamic-redirect',
+      'screen_name': window.location.search
+    });
    </script>
   <script>
       function fetchApiData() {        
@@ -139,7 +152,7 @@
     const words = text.trim().split(/\s+/).length; // Count words in the text
     const readingTimeMinutes = words / wordsPerMinute; // Time in minutes
     const readingTimeMilliseconds = readingTimeMinutes * 60 * 1000; // Convert to milliseconds
-    return Math.round(readingTimeMilliseconds); // Round to the nearest millisecond
+    return Math.round(readingTimeMilliseconds) + 1000; // Round to the nearest millisecond
 }
 
 function getCountdownTemplate(message, countdownSeconds) {
@@ -148,7 +161,7 @@ function getCountdownTemplate(message, countdownSeconds) {
           <div class="modal-content">
             <div class="modal-header">${modalTitle}</div>
             <p>${message}</p>
-            <p>Redirecting in ${countdownSeconds} seconds...</p>
+            <p class="countdown">Redirecting in ${countdownSeconds} seconds...</p>
           </div>
         </div>
       `;
@@ -170,6 +183,6 @@ function getCountdownTemplate(message, countdownSeconds) {
   </script>
 </head>
 <body>
-  <div id="api-response"></div>
+  <div id="api-response">Loading...</div>
 </body>
 </html>
