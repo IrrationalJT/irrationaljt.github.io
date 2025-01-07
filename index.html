@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script>
-    var apiURL = 'https://script.google.com/macros/s/AKfycbxJdp0mG2T5u7gkVsWDkiJ4BOExfe6BiSQBhfq1qgJ8dUqmzSVXN_jjKf2Wly8-0Gbo6g/exec';
+    var apiURL = 'https://script.google.com/macros/s/AKfycbwJNyXkJjGpK9Fzp5Y4dY7gE1u9Y1iKemwtu6l8sXiQHAAJjyaz7UTj0lpW4XyRWYd5ZA/exec';
     var googleAnalyticsID = 'G-8D074M3G8Q';
     var modalTitle = 'IrrationalJT.com';
     var windowTitle = 'IrrationalJT.com';
@@ -43,9 +44,11 @@
       font-weight: bold;
       margin-bottom: 10px;
       color: #333;
-      background-color: #f0f0f0; /* Light neutral background color */
+      background-color: #f0f0f0;
+      /* Light neutral background color */
       padding: 10px;
-      border-radius: 10px 10px 0 0; /* Rounded corners for the top */
+      border-radius: 10px 10px 0 0;
+      /* Rounded corners for the top */
     }
 
     .modal p {
@@ -68,54 +71,56 @@
     }
 
     .countdown {
-      font-size: 20px;      
+      font-size: 20px;
       font-style: italic;
       padding-top: 10px;
       color: rgb(87, 80, 80);
       margin-top: 10px;
     }
   </style>
-   <!-- Google tag (gtag.js) -->
-   <script async src="https://www.googletagmanager.com/gtag/js?id=" + googleAnalyticsID></script>
-   <script>
-   window.dataLayer = window.dataLayer || [];
-   function gtag(){dataLayer.push(arguments);}
-   gtag('js', new Date());
-
-   gtag('config', googleAnalyticsID);
-    gtag('event', 'screen_view', {
-      'app_name': 'dynamic-redirect',
-      'screen_name': window.location.search
-    });
-   </script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=" + googleAnalyticsID></script>
   <script>
-      function fetchApiData() {        
-         // Get the current URL's query string
-         var queryString = window.location.search;
-        
-        // Append the query string to the apiURL
-        apiURL += queryString;
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
 
-        fetch(apiURL, {
-          redirect: 'follow', // manual, *follow, error
-          method: 'GET',
-          headers: {
-            'Content-Type': 'text/plain;charset=utf-8',
-          }
+    gtag('config', googleAnalyticsID);
+
+  </script>
+  <script>
+    function fetchApiData() {
+      // Get the current URL's query string
+      var queryString = window.location.search;
+
+      // Append the query string to the apiURL
+      apiURL += queryString;
+
+      fetch(apiURL, {
+        redirect: 'follow', // manual, *follow, error
+        method: 'GET',
+        headers: {
+          'Content-Type': 'text/plain;charset=utf-8',
+        }
+      })
+        .then(response => response.text())
+        .then(data => {
+          ProcessData(data);
+          console.log('Received data:', data);
         })
-          .then(response => response.text())
-          .then(data => {
-            ProcessData(data);
-            console.log('Received data:', data);
-          })
-          .catch(error => {
-            console.error('Error fetching data:', error);
-          });
-        }     
+        .catch(error => {
+          console.error('Error fetching data:', error);
+        });
+    }
 
-        function ProcessData(data) {
+    function ProcessData(data) {
       try {
         const jsonData = JSON.parse(data);
+        gtag('event', 'screen_view', {
+          'app_name': 'dynamic-redirect',
+          'page_code': window.location.search,
+          'url': jsonData.RedirectURL
+        });
         console.log('Processing JSON data:', jsonData);
 
         const redirectURL = jsonData.RedirectURL;
@@ -147,15 +152,15 @@
       }
     }
 
-  function calculateReadingTime(text) {
-    const wordsPerMinute = 200; // Average reading speed
-    const words = text.trim().split(/\s+/).length; // Count words in the text
-    const readingTimeMinutes = words / wordsPerMinute; // Time in minutes
-    const readingTimeMilliseconds = readingTimeMinutes * 60 * 1000; // Convert to milliseconds
-    return Math.round(readingTimeMilliseconds) + 1000; // Round to the nearest millisecond
-}
+    function calculateReadingTime(text) {
+      const wordsPerMinute = 200; // Average reading speed
+      const words = text.trim().split(/\s+/).length; // Count words in the text
+      const readingTimeMinutes = words / wordsPerMinute; // Time in minutes
+      const readingTimeMilliseconds = readingTimeMinutes * 60 * 1000; // Convert to milliseconds
+      return Math.round(readingTimeMilliseconds) + 1000; // Round to the nearest millisecond
+    }
 
-function getCountdownTemplate(message, countdownSeconds) {
+    function getCountdownTemplate(message, countdownSeconds) {
       return `
         <div class="modal">
           <div class="modal-content">
@@ -182,7 +187,9 @@ function getCountdownTemplate(message, countdownSeconds) {
     window.onload = fetchApiData;
   </script>
 </head>
+
 <body>
   <div id="api-response">Loading...</div>
 </body>
+
 </html>
