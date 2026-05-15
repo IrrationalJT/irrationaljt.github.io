@@ -15,6 +15,7 @@
   </script>
 
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;0,700;1,400&display=swap');
     :root {
       --primary-blue: #1C4587;
       --dark-blue: #02133E;
@@ -22,6 +23,13 @@
       --light-gray: #B7B7B7;
       --muted-blue: #182A69;
       --near-black: #1C1C1C;
+      --ink: #071224;
+      --hero-top: #030917;
+      --hero-bottom: #081225;
+      --panel: rgba(11, 25, 51, 0.78);
+      --panel-border: rgba(115, 154, 255, 0.22);
+      --cyan: #67E8F9;
+      --blue-glow: rgba(77, 141, 255, 0.28);
       --heading-font: 'EB Garamond', Georgia, serif;
       --body-font: Arial, 'Helvetica Neue', Helvetica, sans-serif;
     }
@@ -36,10 +44,26 @@
       min-height: 100%;
       font-family: var(--body-font);
       color: var(--off-white);
-      background: radial-gradient(circle at 20% 20%, #264f96 0%, var(--dark-blue) 45%, var(--muted-blue) 100%);
+      background:
+        radial-gradient(circle at 80% 15%, rgba(103, 232, 249, 0.10), transparent 18%),
+        radial-gradient(circle at 70% 35%, var(--blue-glow), transparent 28%),
+        linear-gradient(180deg, var(--hero-top) 0%, var(--ink) 48%, var(--hero-bottom) 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: linear-gradient(180deg, rgba(255, 255, 255, 0.55), transparent 85%);
+      pointer-events: none;
     }
 
     #api-response {
+      position: relative;
       min-height: 100vh;
     }
 
@@ -54,17 +78,17 @@
       width: 100%;
       height: 100%;
       padding: 24px;
-      background-color: rgba(2, 19, 62, 0.72);
+      background-color: rgba(2, 8, 22, 0.78);
       z-index: 1000;
     }
 
     .modal-content {
-      background: linear-gradient(170deg, rgba(249, 249, 249, 0.97) 0%, rgba(234, 241, 252, 0.96) 100%);
-      color: var(--near-black);
-      border: 1px solid rgba(28, 69, 135, 0.2);
+      background: rgba(11, 25, 51, 0.92);
+      color: var(--off-white);
+      border: 1px solid var(--panel-border);
       border-radius: 16px;
       text-align: center;
-      box-shadow: 0 18px 40px rgba(2, 19, 62, 0.35);
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.38), 0 0 0 1px rgba(103, 232, 249, 0.06);
       width: min(540px, 100%);
       overflow: hidden;
     }
@@ -111,7 +135,7 @@
       font-size: 18px;
       font-style: italic;
       padding-top: 6px;
-      color: #2f4778;
+      color: rgba(103, 232, 249, 0.82);
       margin-top: 10px;
     }
 
@@ -125,9 +149,9 @@
     .loading-card {
       width: min(520px, 100%);
       border-radius: 18px;
-      background: rgba(2, 19, 62, 0.65);
-      border: 1px solid rgba(249, 249, 249, 0.16);
-      box-shadow: 0 20px 44px rgba(0, 0, 0, 0.28);
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.38), 0 0 0 1px rgba(103, 232, 249, 0.06);
       padding: 30px 24px;
       text-align: center;
       backdrop-filter: blur(4px);
@@ -138,7 +162,7 @@
       font-size: 14px;
       letter-spacing: 0.8px;
       text-transform: uppercase;
-      color: rgba(183, 183, 183, 0.9);
+      color: rgba(249, 249, 249, 0.68);
       font-family: var(--body-font);
       font-weight: 700;
     }
@@ -146,19 +170,19 @@
     .loading-text {
       margin: 0;
       font-size: 18px;
-      color: var(--off-white);
+      color: rgba(249, 249, 249, 0.84);
       font-family: var(--heading-font);
       line-height: 1.35;
     }
 
     .spinner-system {
-      width: 104px;
-      height: 104px;
+      width: 170px;
+      height: 170px;
       margin: 0 auto 18px;
       position: relative;
       display: grid;
       place-items: center;
-      filter: drop-shadow(0 0 14px rgba(28, 69, 135, 0.5));
+      filter: drop-shadow(0 0 18px rgba(77, 141, 255, 0.36));
     }
 
     .ring {
@@ -169,27 +193,27 @@
 
     .ring-outer {
       inset: 0;
-      border-top-color: var(--off-white);
-      border-right-color: rgba(249, 249, 249, 0.35);
+      border-top-color: var(--cyan);
+      border-right-color: rgba(103, 232, 249, 0.22);
       animation: spin 1.7s linear infinite;
     }
 
     .ring-inner {
-      inset: 16px;
+      inset: 24px;
       border-bottom-color: var(--primary-blue);
-      border-left-color: rgba(28, 69, 135, 0.45);
+      border-left-color: rgba(77, 141, 255, 0.48);
       animation: spin-reverse 1.05s linear infinite;
     }
 
     .orbit {
       position: absolute;
-      inset: 8px;
+      inset: 14px;
       border-radius: 50%;
       animation: spin 2.8s linear infinite;
     }
 
     .orbit-b {
-      inset: 2px;
+      inset: 6px;
       animation: spin-reverse 2.2s linear infinite;
     }
 
@@ -200,8 +224,8 @@
       transform: translateX(-50%);
       padding: 3px 6px 2px;
       border-radius: 999px;
-      border: 1px solid rgba(249, 249, 249, 0.28);
-      background: rgba(2, 19, 62, 0.88);
+      border: 1px solid rgba(103, 232, 249, 0.28);
+      background: rgba(7, 18, 36, 0.92);
       color: var(--off-white);
       font-size: 10px;
       font-family: 'Courier New', Consolas, monospace;
@@ -212,20 +236,27 @@
     }
 
     .core-chip {
-      width: 44px;
-      height: 44px;
+      width: 124px;
+      height: 124px;
       display: grid;
       place-items: center;
-      border-radius: 10px;
+      border-radius: 12px;
       border: 1px solid rgba(249, 249, 249, 0.35);
-      background: linear-gradient(145deg, #1d4d9a 0%, #16306f 100%);
-      color: var(--off-white);
-      font-family: var(--heading-font);
-      font-size: 22px;
-      font-weight: 700;
-      letter-spacing: -1px;
-      box-shadow: inset 0 0 0 1px rgba(249, 249, 249, 0.12), 0 8px 16px rgba(2, 19, 62, 0.5);
+      background: linear-gradient(145deg, #071224 0%, #02133E 100%);
+      padding: 10px;
+      box-shadow: inset 0 0 0 1px rgba(103, 232, 249, 0.12), 0 10px 22px rgba(0, 0, 0, 0.42), 0 0 22px rgba(77, 141, 255, 0.22);
+      overflow: hidden;
       animation: pulse 1.3s ease-in-out infinite alternate;
+    }
+
+    .core-chip img {
+      width: auto;
+      height: 100px;
+      min-height: 100px;
+      max-width: 100%;
+      max-height: 100%;
+      display: block;
+      object-fit: contain;
     }
 
     @keyframes spin {
@@ -415,7 +446,7 @@
           <div class="ring ring-inner"></div>
           <div class="orbit orbit-a"><span class="node">{ }</span></div>
           <div class="orbit orbit-b"><span class="node">&lt;/&gt;</span></div>
-          <div class="core-chip">JT</div>
+          <div class="core-chip"><img src="jt.png" alt=""></div>
         </div>
         <p class="loading-text">Establishing a secure connection. One moment while we verify everything...</p>
         <h1 class="loading-title">IrrationalJT.com</h1>
